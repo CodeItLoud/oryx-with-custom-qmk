@@ -198,16 +198,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         rgblight_mode(1);
       }
       return false;
+
+
+
+    // Custom QMK starts
+    case KC_H:
+      if (record->event.pressed) {
+          switch (get_last_keycode()) {
+            case KC_S: SEND_STRING(/*s*/"ch"); break;
+            default: SEND_STRING("h");
+          }
+      }
+      return false;
+      // Custom QMK ends
+
   }
+
   return true;
 }
 
 
 
 // Custom QMK here
-const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_BSPC, KC_DEL);
+bool remember_last_key_user(uint16_t keycode, keyrecord_t* record,
+                            uint8_t* remembered_mods) {
+    switch (keycode) {
+        case KC_H:
+            return false;  // Ignore and handle manually in process_record_user()
+    }
 
-// This globally defines all key overrides to be used
-const key_override_t *key_overrides[] = {
-	&delete_key_override
-};
+    return true;  // Other keys can be repeated.
+}
