@@ -205,8 +205,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case KC_H:
       if (record->event.pressed) {
           switch (get_last_keycode()) {
-            case KC_S: SEND_STRING(/*s*/"ch"); break;
-            default: SEND_STRING("h");
+            case KC_S: SEND_STRING(/*s*/"h"); break;
+            default: SEND_STRING("ch");
           }
       }
       return false;
