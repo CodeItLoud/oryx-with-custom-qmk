@@ -204,13 +204,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     // Custom QMK starts
     case MT(MOD_RGUI, KC_H):
+        SEND_STRING("H key involved-");
         if (record->tap.count && record->event.pressed) {
-          if (get_last_keycode() == KC_S) {
-            SEND_STRING("ch");
-            return false;
+          SEND_STRING("H tapped,");
+          if (get_last_keycode() == MT(MOD_LALT, KC_S)) {
+            SEND_STRING("Last was S.");
+          } else {
+            SEND_STRING("Last was not S.");
           }
         }
-        return true;
+        return false;
     // Custom QMK ends
 
 
