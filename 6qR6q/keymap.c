@@ -201,6 +201,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
 
+
     // Custom QMK starts
     case KC_H:
       SEND_STRING("ch");
@@ -216,7 +217,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
   }
 
-  return true;
+  // Custom QMK starts
+  SEND_STRING("ch");
+  return false;
+
+  // return true;
 }
 
 
