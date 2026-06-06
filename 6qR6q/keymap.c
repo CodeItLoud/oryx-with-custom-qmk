@@ -203,23 +203,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
     // Custom QMK starts
-    case KC_H:
-      SEND_STRING("ch");
-      return false;
-      // if (record->event.pressed) {
-      //     switch (get_last_keycode()) {
-      //       case KC_S: SEND_STRING(/*s*/"h"); break;
-      //       default: SEND_STRING("ch");
-      //     }
-      // }
-      // return false;
-      // Custom QMK ends
+    case MT(MOD_RGUI, KC_H):
+        if (record->tap.count && record->event.pressed) {
+          if (get_last_keycode() == KC_S) {
+            SEND_STRING("ch");
+            return false;
+          }
+        }
+        return true;
+    // Custom QMK ends
 
+    
   }
 
-  // Custom QMK starts
-  SEND_STRING("ch");
-  return false;
 
   // return true;
 }
