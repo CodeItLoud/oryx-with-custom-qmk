@@ -161,11 +161,7 @@ bool rgb_matrix_indicators_user(void) {
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  SEND_STRING(/*s*/"ch");
-  return false;
-  
-  
-  switch (keycode) {
+   switch (keycode) {
     case ST_MACRO_0:
     if (record->event.pressed) {
       SEND_STRING(SS_LALT(SS_TAP(X_0) SS_TAP(X_1) SS_TAP(X_3) SS_TAP(X_3) ));
@@ -206,11 +202,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
     // Custom QMK starts
-    case KC_H:
+    case KC_SCLN:
       if (record->event.pressed) {
           switch (get_last_keycode()) {
             case KC_S: SEND_STRING(/*s*/"ch"); break;
-            default: SEND_STRING("hh");
+            default: SEND_STRING("h");
           }
       }
       return false;
@@ -227,7 +223,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool remember_last_key_user(uint16_t keycode, keyrecord_t* record,
                             uint8_t* remembered_mods) {
     switch (keycode) {
-        case KC_H:
+        case KC_SCLN:
             return false;  // Ignore and handle manually in process_record_user()
     }
 
