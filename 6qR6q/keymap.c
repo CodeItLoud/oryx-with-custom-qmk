@@ -202,7 +202,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
     // Custom QMK starts
-    case KC_SCLN:
+    case KC_H:
       if (record->event.pressed) {
           switch (get_last_keycode()) {
             case KC_S: SEND_STRING(/*s*/"ch"); break;
@@ -223,7 +223,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool remember_last_key_user(uint16_t keycode, keyrecord_t* record,
                             uint8_t* remembered_mods) {
     switch (keycode) {
-        case KC_SCLN:
+        case KC_H:
             return false;  // Ignore and handle manually in process_record_user()
     }
 
