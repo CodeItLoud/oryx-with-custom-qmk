@@ -203,13 +203,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     // Custom QMK starts
     case KC_H:
-      if (record->event.pressed) {
-          switch (get_last_keycode()) {
-            case KC_S: SEND_STRING(/*s*/"h"); break;
-            default: SEND_STRING("ch");
-          }
-      }
+      SEND_STRING("ch");
       return false;
+      // if (record->event.pressed) {
+      //     switch (get_last_keycode()) {
+      //       case KC_S: SEND_STRING(/*s*/"h"); break;
+      //       default: SEND_STRING("ch");
+      //     }
+      // }
+      // return false;
       // Custom QMK ends
 
   }
