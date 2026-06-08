@@ -208,7 +208,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           if (get_last_keycode() == MT(MOD_LALT, KC_S)) {
             SEND_STRING(/*s*/"ch");
           } else {
-            SEND_STRING("h");
+            return true;
           }
         }
         return false;
