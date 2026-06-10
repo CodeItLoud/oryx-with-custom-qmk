@@ -204,11 +204,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     // Custom QMK starts
     case KC_MINUS:
+      SEND_STRING("KC_MINUS...");
         if (record->tap.count) {
+          SEND_STRING("tapped.");
           if (record->event.pressed) {
+            SEND_STRING("pressed...");
             if (get_last_keycode() == MT(MOD_LALT, KC_S)) {
+              SEND_STRING("..after S!");
               SEND_STRING(/*s*/"ch");
             } else {
+              SEND_STRING("Not after S.");
               SEND_STRING("-");/*ß*/
             }
           }
