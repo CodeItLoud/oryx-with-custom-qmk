@@ -158,6 +158,9 @@ bool rgb_matrix_indicators_user(void) {
 }
 
 
+static bool last_was_s_tap = false;
+
+
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -203,23 +206,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
     // Custom QMK starts
-case KC_MINUS:
-    if (record->event.pressed) {
-        SEND_STRING("KC_MINUS pressed");
-
-        if (get_last_keycode() == MT(MOD_LALT, KC_S)) {
-            SEND_STRING("ch");
-        } else {
-            tap_code(KC_MINUS);   // erzeugt auf deutschem Layout ß
+    case MT(MOD_LALT, KC_S):
+        if (!record->event.pressed) {
+            last_was_s_tap = record->tap.count > 0;
         }
-    }
-    return false;
-    // Custom QMK ends
+        return true;
 
-      
+    case KC_MINUS:
+        if (record->event.pressed) {
+            if (last_was_s_tap) {
+                SEND_STRING("ch");
+            } else {
+                tap_code(KC_MINUS);   // deutsches ß
+            }
+
+            last_was_s_tap = false;
+        }
+        return false;
+
+    default:
+        if (record->event.pressed) {
+            last_was_s_tap = false;
+        }
+        return true;
   }
-
-  return true;
 }
 
 
