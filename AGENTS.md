@@ -12,6 +12,11 @@ keep changes small, clearly marked, and easy to reconcile.
   the repository root or other folders unless the user explicitly asks for that.
 - Treat Oryx-generated content as likely to change on the next layout fetch.
 
+## Pull Requests
+
+- When asked to create a pull request, use `gh pr create`, avoid staging
+  unrelated files, and show the PR title/body before creating it.
+
 ## Merge-Friendly Custom QMK Changes
 
 - Prefer adding custom logic in clearly separated blocks instead of modifying
