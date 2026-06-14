@@ -158,7 +158,12 @@ bool rgb_matrix_indicators_user(void) {
 }
 
 
+// Custom QMK starts
+#define LEFT_HOME_THUMB_MOD MOD_LSFT
+#define RIGHT_HOME_THUMB_KEY LT(5, KC_SPACE)
+
 static bool last_was_s_tap = false;
+static uint8_t restore_oneshot_mods_after_right_thumb = 0;
 
 
 
@@ -206,6 +211,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
     // Custom QMK starts
+    case RIGHT_HOME_THUMB_KEY:
+        if (record->event.pressed) {
+            last_was_s_tap = false;
+            return true;
+        }
+
+        if (record->tap.count > 0) {
+            const uint8_t oneshot_mods = get_oneshot_mods();
+
+            if (oneshot_mods & LEFT_HOME_THUMB_MOD) {
+                restore_oneshot_mods_after_right_thumb = oneshot_mods;
+                clear_oneshot_mods();
+            }
+        }
+
+        return true;
+
     case MT(MOD_LALT, KC_S):
         if (!record->event.pressed) {
             last_was_s_tap = record->tap.count > 0;
@@ -232,6 +254,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   return true;
+}
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == RIGHT_HOME_THUMB_KEY && !record->event.pressed &&
+        restore_oneshot_mods_after_right_thumb) {
+        set_oneshot_mods(restore_oneshot_mods_after_right_thumb);
+        restore_oneshot_mods_after_right_thumb = 0;
+    }
 }
 
 
