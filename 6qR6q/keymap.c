@@ -13,6 +13,8 @@ enum custom_keycodes {
   ST_MACRO_3,
   ST_MACRO_4,
   ST_MACRO_5,
+  LEFT_HOME_THUMB,
+  RIGHT_HOME_THUMB,
 };
 
 
@@ -23,7 +25,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESCAPE,      KC_COMMA,       KC_C,           KC_U,           KC_A,           KC_Q,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_MINUS,       KC_X,           
     CW_TOGG,        MT(MOD_LGUI, KC_DOT),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_I),MT(MOD_LCTL, KC_E),KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T),MT(MOD_RSFT, KC_N),MT(MOD_LALT, KC_R),MT(MOD_RGUI, KC_H),KC_F,           
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_SCLN,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,           
-    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), OSM(MOD_LSFT),                                  LT(5, KC_SPACE),LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,           
+    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), LEFT_HOME_THUMB,                                 RIGHT_HOME_THUMB,LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,
                                                     LT(2, KC_TAB),  KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
   [1] = LAYOUT_voyager(
@@ -159,11 +161,37 @@ bool rgb_matrix_indicators_user(void) {
 
 
 // Custom QMK starts
-#define LEFT_HOME_THUMB_MOD MOD_LSFT
-#define RIGHT_HOME_THUMB_KEY LT(5, KC_SPACE)
+#define HOME_THUMB_STICKY_MOD MOD_LSFT
+#define LEFT_HOME_THUMB_LAYER 2
+#define RIGHT_HOME_THUMB_LAYER 5
+
+enum home_thumb_side {
+    HOME_THUMB_NONE,
+    HOME_THUMB_LEFT,
+    HOME_THUMB_RIGHT,
+};
 
 static bool last_was_s_tap = false;
-static uint8_t restore_oneshot_mods_after_right_thumb = 0;
+static bool left_home_thumb_held = false;
+static bool left_home_thumb_layer_active = false;
+static uint16_t left_home_thumb_timer = 0;
+static bool right_home_thumb_held = false;
+static bool right_home_thumb_layer_active = false;
+static uint16_t right_home_thumb_timer = 0;
+static enum home_thumb_side last_tapped_home_thumb = HOME_THUMB_NONE;
+
+static void handle_home_thumb_tap(enum home_thumb_side side) {
+    const enum home_thumb_side other_side =
+        side == HOME_THUMB_LEFT ? HOME_THUMB_RIGHT : HOME_THUMB_LEFT;
+
+    if (last_tapped_home_thumb == other_side) {
+        set_oneshot_mods(get_oneshot_mods() | HOME_THUMB_STICKY_MOD);
+        last_tapped_home_thumb = HOME_THUMB_NONE;
+    } else {
+        tap_code(KC_SPACE);
+        last_tapped_home_thumb = side;
+    }
+}
 
 
 
@@ -211,22 +239,45 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
     // Custom QMK starts
-    case RIGHT_HOME_THUMB_KEY:
+    case LEFT_HOME_THUMB:
         if (record->event.pressed) {
             last_was_s_tap = false;
-            return true;
+            left_home_thumb_held = true;
+            left_home_thumb_layer_active = false;
+            left_home_thumb_timer = timer_read();
+            return false;
         }
 
-        if (record->tap.count > 0) {
-            const uint8_t oneshot_mods = get_oneshot_mods();
+        left_home_thumb_held = false;
 
-            if (oneshot_mods & LEFT_HOME_THUMB_MOD) {
-                restore_oneshot_mods_after_right_thumb = oneshot_mods;
-                clear_oneshot_mods();
-            }
+        if (left_home_thumb_layer_active) {
+            layer_off(LEFT_HOME_THUMB_LAYER);
+            left_home_thumb_layer_active = false;
+        } else {
+            handle_home_thumb_tap(HOME_THUMB_LEFT);
         }
 
-        return true;
+        return false;
+
+    case RIGHT_HOME_THUMB:
+        if (record->event.pressed) {
+            last_was_s_tap = false;
+            right_home_thumb_held = true;
+            right_home_thumb_layer_active = false;
+            right_home_thumb_timer = timer_read();
+            return false;
+        }
+
+        right_home_thumb_held = false;
+
+        if (right_home_thumb_layer_active) {
+            layer_off(RIGHT_HOME_THUMB_LAYER);
+            right_home_thumb_layer_active = false;
+        } else {
+            handle_home_thumb_tap(HOME_THUMB_RIGHT);
+        }
+
+        return false;
 
     case MT(MOD_LALT, KC_S):
         if (!record->event.pressed) {
@@ -249,6 +300,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     default:
         if (record->event.pressed) {
             last_was_s_tap = false;
+            last_tapped_home_thumb = HOME_THUMB_NONE;
         }
         return true;
   }
@@ -256,11 +308,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (keycode == RIGHT_HOME_THUMB_KEY && !record->event.pressed &&
-        restore_oneshot_mods_after_right_thumb) {
-        set_oneshot_mods(restore_oneshot_mods_after_right_thumb);
-        restore_oneshot_mods_after_right_thumb = 0;
+void matrix_scan_user(void) {
+    if (left_home_thumb_held && !left_home_thumb_layer_active &&
+        timer_elapsed(left_home_thumb_timer) >= TAPPING_TERM) {
+        layer_on(LEFT_HOME_THUMB_LAYER);
+        left_home_thumb_layer_active = true;
+        last_tapped_home_thumb = HOME_THUMB_NONE;
+    }
+
+    if (right_home_thumb_held && !right_home_thumb_layer_active &&
+        timer_elapsed(right_home_thumb_timer) >= TAPPING_TERM) {
+        layer_on(RIGHT_HOME_THUMB_LAYER);
+        right_home_thumb_layer_active = true;
+        last_tapped_home_thumb = HOME_THUMB_NONE;
     }
 }
 
