@@ -190,7 +190,7 @@ static void handle_home_thumb_tap(enum home_thumb_side side) {
     } else {
         if (side == HOME_THUMB_LEFT) {
             set_oneshot_mods(get_oneshot_mods() | HOME_THUMB_STICKY_MOD);
-        } else {‚
+        } else {
             tap_code(KC_SPACE);
         }
 
