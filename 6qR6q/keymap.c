@@ -188,9 +188,9 @@ static void handle_home_thumb_tap(enum home_thumb_side side) {
         set_oneshot_mods(get_oneshot_mods() | HOME_THUMB_STICKY_MOD);
         last_tapped_home_thumb = HOME_THUMB_NONE;
     } else {
-        if (home_thumb_side == HOME_THUMB_LEFT) {
+        if (side == HOME_THUMB_LEFT) {
             set_oneshot_mods(get_oneshot_mods() | HOME_THUMB_STICKY_MOD);
-        } else {
+        } else {‚
             tap_code(KC_SPACE);
         }
 
