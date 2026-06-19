@@ -17,13 +17,14 @@ enum custom_keycodes {
 
 
 
+#define DUAL_FUNC_0 LT(13, KC_L)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_ESCAPE,      KC_COMMA,       KC_C,           KC_U,           KC_A,           KC_Q,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_MINUS,       KC_X,           
     CW_TOGG,        MT(MOD_LGUI, KC_DOT),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_I),MT(MOD_LCTL, KC_E),KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T),MT(MOD_RSFT, KC_N),MT(MOD_LALT, KC_R),MT(MOD_RGUI, KC_H),KC_F,           
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_SCLN,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,           
-    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), OSM(MOD_LSFT),                                  LT(5, KC_SPACE),LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,           
+    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), DUAL_FUNC_0,                                    LT(5, KC_SPACE),LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,           
                                                     LT(2, KC_TAB),  KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
   [1] = LAYOUT_voyager(
@@ -193,6 +194,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     break;
 
+    case DUAL_FUNC_0:
+      if (record->tap.count > 0) {
+        if (record->event.pressed) {
+          register_code16(KC_LEFT_SHIFT);
+        } else {
+          unregister_code16(KC_LEFT_SHIFT);
+        }
+      } else {
+        if (record->event.pressed) {
+          layer_on(2);
+        } else {
+          if (!is_layer_locked(2)) {
+          layer_off(2);
+          }
+        }  
+      }  
+      return false;
     case RGB_SLD:
       if (record->event.pressed) {
         rgblight_mode(1);
