@@ -197,6 +197,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case DUAL_FUNC_0:
       if (record->tap.count > 0) {
         if (record->event.pressed) {
+          set_oneshot_mods(MOD_BIT(KC_LSFT))
           register_code16(KC_LEFT_SHIFT);
         } else {
           unregister_code16(KC_LEFT_SHIFT);
