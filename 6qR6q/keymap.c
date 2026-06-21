@@ -227,7 +227,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       if (record->tap.count > 0) {
         if (record->event.pressed) {
           if (LAST_WAS_STICKY_SHIFT_LEFT) {
-            clear_oneshot_mods(MOD_BIT(KC_LSFT));
+            clear_oneshot_mods();
             LAST_WAS_STICKY_SHIFT_LEFT = false;
           } else {
             set_oneshot_mods(MOD_BIT(KC_LSFT));
@@ -238,7 +238,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         //unregister_code16(KC_LEFT_SHIFT);
         //}
       } else {
-        clear_oneshot_mods(MOD_BIT(KC_LSFT));
+        clear_oneshot_mods();
         LAST_WAS_STICKY_SHIFT_LEFT = false;
         if (record->event.pressed) {
           layer_on(2);
