@@ -160,6 +160,8 @@ bool rgb_matrix_indicators_user(void) {
 
 
 static bool last_was_s_tap = false;
+static bool LAST_WAS_STICKY_SHIFT_LEFT = false;
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
@@ -193,25 +195,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       SEND_STRING(SS_LSFT(SS_TAP(X_EQUAL))SS_DELAY(1)  SS_TAP(X_SPACE));
     }
     break;
-
-    case DUAL_FUNC_0:
-      if (record->tap.count > 0) {
-        if (record->event.pressed) {
-          set_oneshot_mods(MOD_BIT(KC_LSFT));
-          //register_code16(KC_LEFT_SHIFT);
-        } //else {
-          //unregister_code16(KC_LEFT_SHIFT);
-        //}
-      } else {
-        if (record->event.pressed) {
-          layer_on(2);
-        } else {
-          if (!is_layer_locked(2)) {
-          layer_off(2);
-          }
-        }
-      }
-      return false;
     case RGB_SLD:
       if (record->event.pressed) {
         rgblight_mode(1);
@@ -240,9 +223,49 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         return false;
 
+    case DUAL_FUNC_0:
+      if (record->tap.count > 0) {
+        if (record->event.pressed) {
+          if (LAST_WAS_STICKY_SHIFT_LEFT) {
+            clear_oneshot_mods(MOD_BIT(KC_LSFT));
+            LAST_WAS_STICKY_SHIFT_LEFT = false;
+          } else {
+            set_oneshot_mods(MOD_BIT(KC_LSFT));
+            LAST_WAS_STICKY_SHIFT_LEFT = true;
+          }
+          //register_code16(KC_LEFT_SHIFT);
+        } //else {
+        //unregister_code16(KC_LEFT_SHIFT);
+        //}
+      } else {
+        clear_oneshot_mods(MOD_BIT(KC_LSFT));
+        LAST_WAS_STICKY_SHIFT_LEFT = false;
+        if (record->event.pressed) {
+          layer_on(2);
+        } else {
+          if (!is_layer_locked(2)) {
+            layer_off(2);
+          }
+        }
+      }
+      return false;
+
+    case LT(5, KC_SPACE):
+      if (record->tap.count > 0) {
+        if (!record->event.pressed) {
+          if (LAST_WAS_STICKY_SHIFT_LEFT) {
+            register_code16(KC_SPACE);
+            set_oneshot_mods(MOD_BIT(KC_LSFT));
+            return false;
+          }
+        }
+      }
+      return true;
+
     default:
         if (record->event.pressed) {
             last_was_s_tap = false;
+            LAST_WAS_STICKY_SHIFT_LEFT = false;
         }
         return true;
   }
