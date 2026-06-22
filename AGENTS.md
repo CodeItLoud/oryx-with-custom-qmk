@@ -17,6 +17,11 @@ keep changes small, clearly marked, and easy to reconcile.
 - When asked to create a pull request, use `gh pr create`, avoid staging
   unrelated files, and show the PR title/body before creating it.
 
+## Builds
+
+- Do not try to build this project locally. Firmware builds happen elsewhere,
+  outside this repository workflow.
+
 ## Merge-Friendly Custom QMK Changes
 
 - Prefer adding custom logic in clearly separated blocks instead of modifying
