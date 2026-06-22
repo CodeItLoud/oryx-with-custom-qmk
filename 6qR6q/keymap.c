@@ -252,15 +252,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
 
     case LT(5, KC_SPACE):
-      if (record->tap.count > 0) {
-        if (!record->event.pressed) {
-          if (LAST_WAS_STICKY_SHIFT_LEFT) {
-            register_code16(KC_SPACE);
-            caps_word_toggle();
-            LAST_WAS_STICKY_SHIFT_LEFT=false;
-            return false;
-          }
+      if (LAST_WAS_STICKY_SHIFT_LEFT) {
+        if (record->tap.count > 0 && !record->event.pressed) {
+          clear_oneshot_mods();
+          caps_word_on();
+          LAST_WAS_STICKY_SHIFT_LEFT = false;
         }
+        return false;
       }
       return true;
 
