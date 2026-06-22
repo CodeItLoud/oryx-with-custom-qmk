@@ -208,6 +208,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case MT(MOD_LALT, KC_S):
         if (!record->event.pressed) {
             last_was_s_tap = record->tap.count > 0;
+            LAST_WAS_STICKY_SHIFT_LEFT = false;
         }
         return true;
 
@@ -255,7 +256,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (!record->event.pressed) {
           if (LAST_WAS_STICKY_SHIFT_LEFT) {
             register_code16(KC_SPACE);
-            set_oneshot_mods(MOD_BIT(KC_LSFT));
+            caps_word_toggle()
+            LAST_WAS_STICKY_SHIFT_LEFT=false;
             return false;
           }
         }
