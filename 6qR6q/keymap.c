@@ -256,7 +256,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (!record->event.pressed) {
           if (LAST_WAS_STICKY_SHIFT_LEFT) {
             register_code16(KC_SPACE);
-            caps_word_toggle()
+            caps_word_toggle();
             LAST_WAS_STICKY_SHIFT_LEFT=false;
             return false;
           }
