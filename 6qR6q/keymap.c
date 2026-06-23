@@ -161,6 +161,7 @@ bool rgb_matrix_indicators_user(void) {
 
 static bool last_was_s_tap = false;
 static bool LAST_WAS_STICKY_SHIFT_LEFT = false;
+static bool dual_func_0_caps_word_pending = false;
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -209,6 +210,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (!record->event.pressed) {
             last_was_s_tap = record->tap.count > 0;
             LAST_WAS_STICKY_SHIFT_LEFT = false;
+            dual_func_0_caps_word_pending = false;
         }
         return true;
 
@@ -221,6 +223,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
 
             last_was_s_tap = false;
+            dual_func_0_caps_word_pending = false;
         }
         return false;
 
@@ -230,9 +233,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           if (LAST_WAS_STICKY_SHIFT_LEFT) {
             clear_oneshot_mods();
             LAST_WAS_STICKY_SHIFT_LEFT = false;
+            dual_func_0_caps_word_pending = false;
           } else {
             set_oneshot_mods(MOD_BIT(KC_LSFT));
             LAST_WAS_STICKY_SHIFT_LEFT = true;
+            dual_func_0_caps_word_pending = true;
           }
           //register_code16(KC_LEFT_SHIFT);
         } //else {
@@ -241,6 +246,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       } else {
         clear_oneshot_mods();
         LAST_WAS_STICKY_SHIFT_LEFT = false;
+        dual_func_0_caps_word_pending = false;
         if (record->event.pressed) {
           layer_on(2);
         } else {
@@ -252,11 +258,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
 
     case LT(5, KC_SPACE):
-      if (LAST_WAS_STICKY_SHIFT_LEFT) {
-        if (record->tap.count > 0 && !record->event.pressed) {
+      if (dual_func_0_caps_word_pending) {
+        if (!record->event.pressed) {
           clear_oneshot_mods();
-          caps_word_on();
+          if (record->tap.count > 0) {
+            caps_word_on();
+          }
           LAST_WAS_STICKY_SHIFT_LEFT = false;
+          dual_func_0_caps_word_pending = false;
         }
         return false;
       }
@@ -266,6 +275,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (record->event.pressed) {
             last_was_s_tap = false;
             LAST_WAS_STICKY_SHIFT_LEFT = false;
+            dual_func_0_caps_word_pending = false;
         }
         return true;
   }
