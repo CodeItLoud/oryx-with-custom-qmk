@@ -234,14 +234,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             set_oneshot_mods(MOD_BIT(KC_LSFT));
             last_was_left_home_thumb_tap = true;
           }
-          //register_code16(KC_LEFT_SHIFT);
-        } //else {
-        //unregister_code16(KC_LEFT_SHIFT);
-        //}
+        }
       } else {
-        clear_oneshot_mods();
-        last_was_left_home_thumb_tap = false;
         if (record->event.pressed) {
+          clear_oneshot_mods();
+          last_was_left_home_thumb_tap = false;
           layer_on(2);
         } else {
           if (!is_layer_locked(2)) {
