@@ -160,9 +160,7 @@ bool rgb_matrix_indicators_user(void) {
 
 
 static bool last_was_s_tap = false;
-static bool LAST_WAS_STICKY_SHIFT_LEFT = false;
-static bool dual_func_0_caps_word_pending = false;
-
+static bool last_was_left_home_thumb_tap = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
@@ -209,8 +207,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case MT(MOD_LALT, KC_S):
         if (!record->event.pressed) {
             last_was_s_tap = record->tap.count > 0;
-            LAST_WAS_STICKY_SHIFT_LEFT = false;
-            dual_func_0_caps_word_pending = false;
+            last_was_left_home_thumb_tap = false;
         }
         return true;
 
@@ -223,21 +220,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
 
             last_was_s_tap = false;
-            dual_func_0_caps_word_pending = false;
+            last_was_left_home_thumb_tap = false;
         }
         return false;
 
     case DUAL_FUNC_0:
       if (record->tap.count > 0) {
         if (record->event.pressed) {
-          if (LAST_WAS_STICKY_SHIFT_LEFT) {
+          if (last_was_left_home_thumb_tap) {
             clear_oneshot_mods();
-            LAST_WAS_STICKY_SHIFT_LEFT = false;
-            dual_func_0_caps_word_pending = false;
+            last_was_left_home_thumb_tap = false;
           } else {
             set_oneshot_mods(MOD_BIT(KC_LSFT));
-            LAST_WAS_STICKY_SHIFT_LEFT = true;
-            dual_func_0_caps_word_pending = true;
+            last_was_left_home_thumb_tap = true;
           }
           //register_code16(KC_LEFT_SHIFT);
         } //else {
@@ -245,8 +240,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         //}
       } else {
         clear_oneshot_mods();
-        LAST_WAS_STICKY_SHIFT_LEFT = false;
-        dual_func_0_caps_word_pending = false;
+        last_was_left_home_thumb_tap = false;
         if (record->event.pressed) {
           layer_on(2);
         } else {
@@ -258,14 +252,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
 
     case LT(5, KC_SPACE):
-      if (dual_func_0_caps_word_pending) {
+      if (last_was_left_home_thumb_tap) {
         if (!record->event.pressed) {
           clear_oneshot_mods();
           if (record->tap.count > 0) {
             caps_word_on();
           }
-          LAST_WAS_STICKY_SHIFT_LEFT = false;
-          dual_func_0_caps_word_pending = false;
+          last_was_left_home_thumb_tap = false;
         }
         return false;
       }
@@ -274,8 +267,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     default:
         if (record->event.pressed) {
             last_was_s_tap = false;
-            LAST_WAS_STICKY_SHIFT_LEFT = false;
-            dual_func_0_caps_word_pending = false;
+            last_was_left_home_thumb_tap = false;
         }
         return true;
   }
