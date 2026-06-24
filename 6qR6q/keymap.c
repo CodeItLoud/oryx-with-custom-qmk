@@ -205,7 +205,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     // Custom QMK starts
     case MT(MOD_LALT, KC_S):
-        if (!record->event.pressed) {
+        if (record->event.pressed) {
             last_was_s_tap = record->tap.count > 0;
             last_was_left_home_thumb_tap = false;
         }
@@ -253,14 +253,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case LT(5, KC_SPACE):
       if (last_was_left_home_thumb_tap) {
-        if (!record->event.pressed) {
+        last_was_left_home_thumb_tap = false;
+        if (record->event.pressed && record->tap.count > 0) {
           clear_oneshot_mods();
-          if (record->tap.count > 0) {
-            caps_word_on();
-          }
-          last_was_left_home_thumb_tap = false;
+          caps_word_on();
+          return false;
         }
-        return false;
       }
       return true;
 
