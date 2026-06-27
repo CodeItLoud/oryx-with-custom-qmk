@@ -17,14 +17,14 @@ enum custom_keycodes {
 
 
 
-#define DUAL_FUNC_0 LT(15, KC_F6)
+#define HOME_THUMB_LEFT LT(13, KC_L)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
-    KC_ESCAPE,      KC_COMMA,       KC_C,           KC_U,           KC_A,           KC_Q,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_X,           
-    CW_TOGG,        MT(MOD_LGUI, KC_DOT),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_I),MT(MOD_LCTL, KC_E),KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T),MT(MOD_RSFT, KC_N),MT(MOD_LALT, KC_R),MT(MOD_RGUI, KC_H),KC_MINUS,       
+    KC_ESCAPE,      KC_COMMA,       KC_C,           KC_U,           KC_A,           KC_Q,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_X,
+    CW_TOGG,        MT(MOD_LGUI, KC_DOT),MT(MOD_LALT, KC_S),MT(MOD_LSFT, KC_I),MT(MOD_LCTL, KC_E),KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T),MT(MOD_RSFT, KC_N),MT(MOD_LALT, KC_R),MT(MOD_RGUI, KC_H),KC_MINUS,
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_SCLN,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,           
-    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), DUAL_FUNC_0,                                    LT(5, KC_SPACE),LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,
+    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), HOME_THUMB_LEFT,                                    LT(5, KC_SPACE),LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,
                                                     LT(2, KC_TAB),  KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
   [1] = LAYOUT_voyager(
@@ -224,7 +224,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         return false;
 
-    case DUAL_FUNC_0:
+    case HOME_THUMB_LEFT:
       if (record->tap.count > 0) {
         if (record->event.pressed) {
           if (last_was_left_home_thumb_tap) {
