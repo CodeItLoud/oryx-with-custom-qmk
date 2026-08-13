@@ -23,7 +23,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_ESCAPE,      KC_COMMA,       KC_C,           KC_U,           KC_A,           KC_Q,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_X,           
     CW_TOGG,        KC_DOT,         KC_S,           KC_I,           KC_E,           KC_O,                                           KC_D,           KC_T,           KC_N,           KC_R,           KC_H,           KC_MINUS,
-    MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_SCLN,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,           
+    MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_SCLN,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,
     KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), HOME_THUMB_LEFT,                                    LT(5, KC_SPACE),LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,
                                                     LT(2, KC_TAB),  KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
@@ -194,6 +194,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       SEND_STRING(SS_LSFT(SS_TAP(X_EQUAL))SS_DELAY(1)  SS_TAP(X_SPACE));
     }
     break;
+
     case RGB_SLD:
       if (record->event.pressed) {
         rgblight_mode(1);
