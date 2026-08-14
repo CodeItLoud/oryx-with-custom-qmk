@@ -229,8 +229,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       // Look back at the history array!
       // index 0 is two keys ago; index 1 is the immediate last key
       if (key_history[0] == MT(MOD_LALT, KC_S) && key_history[1] == MT(MOD_LSFT, KC_I)) {
-        // Sendet zuerst Backspace, dann 'a', 'b', 'c'
-        SEND_STRING(SS_TAP(X_BSPC) "ch");
+        tap_code(KC_BSPC); // Sendet garantiert ein echtes Backspace
+        SEND_STRING("ch");
       } else {
         tap_code(KC_H);
       }
