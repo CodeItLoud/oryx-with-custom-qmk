@@ -13,6 +13,9 @@ enum custom_keycodes {
   ST_MACRO_3,
   ST_MACRO_4,
   ST_MACRO_5,
+
+  // Self implemented keys
+  MAGIC_H_KEY,
 };
 
 
@@ -22,7 +25,7 @@ enum custom_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_ESCAPE,      KC_MINUS,       KC_C,           KC_U,           KC_A,           KC_COMMA,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_Q,
-    CW_TOGG,        MT(MOD_LGUI, KC_SCLN),         MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_I), MT(MOD_LCTL, KC_E),           KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T), MT(MOD_RSFT, KC_N), MT(MOD_LALT, KC_R), MT(MOD_RGUI, KC_H), KC_X,
+    CW_TOGG,        MT(MOD_LGUI, KC_SCLN),         MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_I), MT(MOD_LCTL, KC_E),           KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T), MT(MOD_RSFT, KC_N), MT(MOD_LALT, KC_R), MT(MOD_RGUI, MAGIC_H_KEY), KC_X,
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_DOT,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,
     KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), HOME_THUMB_LEFT,                                    LT(5, KC_SPACE),LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,
                                                     LT(2, KC_TAB),  KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
@@ -162,6 +165,23 @@ bool rgb_matrix_indicators_user(void) {
 static bool last_was_s_tap = false;
 static bool last_was_left_home_thumb_tap = false;
 
+// Define how many past keystrokes you want to remember
+#define KEY_HISTORY_SIZE 2
+
+// Array to store the key history
+static uint16_t key_history[KEY_HISTORY_SIZE] = {0};
+
+// Helper function to push a new keycode into the history buffer
+void add_to_history(uint16_t keycode) {
+  // Shift elements to the left to make room for the newest key
+  for (int i = 0; i < KEY_HISTORY_SIZE - 1; i++) {
+    key_history[i] = key_history[i + 1];
+  }
+  // Insert the newest key at the end of the array
+  key_history[KEY_HISTORY_SIZE - 1] = keycode;
+}
+
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case ST_MACRO_0:
@@ -205,10 +225,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
     // Custom QMK starts
+    case MAGIC_H_KEY:
+      // Look back at the history array!
+      // index 0 is two keys ago; index 1 is the immediate last key
+      if (key_history[0] == MT(MOD_LALT, KC_S) && key_history[1] == MT(MOD_LSFT, KC_I)) {
+        // Sendet zuerst Backspace, dann 'a', 'b', 'c'
+        SEND_STRING(SS_TAP(X_BSPC) "ch");
+      } else {
+        tap_code(KC_H);
+      }
+
+      // Do not add the macro key itself to the text history
+      // to avoid self-interference.
+      return false;
+
     case KC_S:
         if (record->event.pressed) {
             last_was_s_tap = record->tap.count > 0;
             last_was_left_home_thumb_tap = false;
+            add_to_history(keycode);
         }
         return true;
 
@@ -255,6 +290,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (record->event.pressed && record->tap.count > 0) {
           clear_oneshot_mods();
           caps_word_on();
+          add_to_history(keycode);
           return false;
         }
       }
@@ -264,6 +300,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (record->event.pressed) {
             last_was_s_tap = false;
             last_was_left_home_thumb_tap = false;
+            add_to_history(keycode);
         }
         return true;
   }
