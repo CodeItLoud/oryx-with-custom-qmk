@@ -237,8 +237,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // index 0 is two keys ago; index 1 is the immediate last key
 
         if (key_history[0] == KC_O && key_history[1] == MT(MOD_LCTL, KC_E)) {
-          SEND_STRING(was_caps_word_on ? "E" : "e");
-          add_to_history(MT(MOD_LCTL, KC_E));
+          SEND_STRING(was_caps_word_on ? "S" : "s");
+          add_to_history(MT(MOD_LALT, KC_S));
         } else if (key_history[0] == KC_O && key_history[1] == KC_A) {
           SEND_STRING(was_caps_word_on ? "S" : "s");
           add_to_history(MT(MOD_LALT, KC_S));
