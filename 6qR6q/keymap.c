@@ -235,13 +235,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         // Look back at the history array!
         // index 0 is two keys ago; index 1 is the immediate last key
-        if (key_history[0] == MT(MOD_LALT, KC_S) && key_history[1] == MT(MOD_LSFT, KC_I)) {
+
+        if (key_history[0] == KC_O && key_history[1] == KC_A) {
+          SEND_STRING(is_caps_word_on ? "S" : "s");
+          add_to_history(MT(MOD_LALT, KC_S));
+        } else if (key_history[0] == MT(MOD_LALT, KC_S) && key_history[1] == MT(MOD_LSFT, KC_I)) {
           tap_code(KC_BSPC); // Sendet garantiert ein echtes Backspace
-          SEND_STRING(was_caps_word_on ? "CH" : "ch");
-          key_history[KEY_HISTORY_SIZE - 1] = KC_C;
           if (was_caps_word_on) {
             caps_word_on();
           }
+          SEND_STRING(is_caps_word_on ? "CH" : "ch");
+          key_history[KEY_HISTORY_SIZE - 1] = KC_C;
           add_to_history(MAGIC_H_KEY);
         } else {
           if (was_caps_word_on) {
