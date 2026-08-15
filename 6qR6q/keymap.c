@@ -165,12 +165,18 @@ static bool last_was_left_home_thumb_tap = false;
 
 // Define how many past keystrokes you want to remember
 #define KEY_HISTORY_SIZE 2
+#define KEY_HISTORY_ALLOWED_MODS (MOD_MASK_SHIFT | MOD_BIT(KC_RALT))
 
 // Array to store the key history
 static uint16_t key_history[KEY_HISTORY_SIZE] = {0};
 
 // Helper function to push a new keycode into the history buffer
 void add_to_history(uint16_t keycode) {
+  uint8_t active_mods = get_mods() | get_oneshot_mods() | get_weak_mods();
+  if (active_mods & ~KEY_HISTORY_ALLOWED_MODS) {
+    return;
+  }
+
   // Shift elements to the left to make room for the newest key
   for (int i = 0; i < KEY_HISTORY_SIZE - 1; i++) {
     key_history[i] = key_history[i + 1];
