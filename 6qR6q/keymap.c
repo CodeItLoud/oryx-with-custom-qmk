@@ -238,19 +238,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (key_history[0] == MT(MOD_LALT, KC_S) && key_history[1] == MT(MOD_LSFT, KC_I)) {
           tap_code(KC_BSPC); // Sendet garantiert ein echtes Backspace
           SEND_STRING(was_caps_word_on ? "CH" : "ch");
+          key_history[KEY_HISTORY_SIZE - 1] = KC_C;
           if (was_caps_word_on) {
             caps_word_on();
           }
+          add_to_history(MAGIC_H_KEY);
         } else {
           if (was_caps_word_on) {
             tap_code16(LSFT(KC_H));
           } else {
             tap_code(KC_H);
           }
+          add_to_history(MAGIC_H_KEY);
         }
 
-        // Do not add the macro key itself to the text history
-        // to avoid self-interference.
         return false;
       }
       return true;
