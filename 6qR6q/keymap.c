@@ -224,18 +224,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     // Custom QMK starts
     case MAGIC_H_KEY:
-      // Look back at the history array!
-      // index 0 is two keys ago; index 1 is the immediate last key
-      if (key_history[0] == MT(MOD_LALT, KC_S) && key_history[1] == MT(MOD_LSFT, KC_I)) {
-        tap_code(KC_BSPC); // Sendet garantiert ein echtes Backspace
-        SEND_STRING("ch");
-      } else {
-        tap_code(KC_H);
-      }
+      if (record->tap.count && record->event.pressed) {
+        // Look back at the history array!
+        // index 0 is two keys ago; index 1 is the immediate last key
+        if (key_history[0] == MT(MOD_LALT, KC_S) && key_history[1] == MT(MOD_LSFT, KC_I)) {
+          tap_code(KC_BSPC); // Sendet garantiert ein echtes Backspace
+          SEND_STRING("ch");
+        } else {
+          tap_code(KC_H);
+        }
 
-      // Do not add the macro key itself to the text history
-      // to avoid self-interference.
-      return false;
+        // Do not add the macro key itself to the text history
+        // to avoid self-interference.
+        return false;
+      }
+      return true;
 
     case KC_S:
         if (record->event.pressed) {
