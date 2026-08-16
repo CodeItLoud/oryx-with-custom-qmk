@@ -19,7 +19,7 @@ enum custom_keycodes {
 
 #define HOME_THUMB_LEFT LT(13, KC_L)
 #define MAGIC_H_KEY MT(MOD_RGUI, KC_H)
-#define MAGIC_C_KEY MT(MOD_RGUI, KC_H)
+#define MAGIC_C_KEY KC_C
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
@@ -280,9 +280,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           key_history[KEY_HISTORY_SIZE - 1] = KC_Q;
         } else {
           if (was_caps_word_on) {
-            tap_code16(LSFT(MAGIC_C_KEY));
+            tap_code16(LSFT(KC_C));
           } else {
-            tap_code(MAGIC_C_KEY);
+            tap_code(KC_C);
           }
           add_to_history(MAGIC_C_KEY);
         }
