@@ -19,10 +19,11 @@ enum custom_keycodes {
 
 #define HOME_THUMB_LEFT LT(13, KC_L)
 #define MAGIC_H_KEY MT(MOD_RGUI, KC_H)
+#define MAGIC_C_KEY MT(MOD_RGUI, KC_H)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
-    KC_ESCAPE,      KC_MINUS,       KC_C,           KC_U,           KC_A,           KC_COMMA,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_J,
+    KC_ESCAPE,      KC_MINUS,       MAGIC_C_KEY,           KC_U,           KC_A,           KC_COMMA,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_J,
     CW_TOGG,        MT(MOD_LGUI, KC_SCLN),         MT(MOD_LALT, KC_S), MT(MOD_LSFT, KC_I), MT(MOD_LCTL, KC_E),           KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T), MT(MOD_RSFT, KC_N), MT(MOD_LALT, KC_R), MAGIC_H_KEY, KC_X,
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_DOT,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_Q,
     KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), HOME_THUMB_LEFT,                                    LT(5, KC_SPACE),LT(3, KC_DELETE),KC_2,           KC_4,           KC_6,           KC_8,
@@ -257,6 +258,33 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             tap_code(KC_H);
           }
           add_to_history(MAGIC_H_KEY);
+        }
+
+        return false;
+      }
+      return true;
+
+    case MAGIC_C_KEY:
+      if (record->tap.count && record->event.pressed) {
+        bool was_caps_word_on = is_caps_word_on();
+
+        // Look back at the history array!
+        // index 0 is two keys ago; index 1 is the immediate last key
+
+        if (key_history[1] == KC_J) {
+          tap_code(KC_BSPC); // Sendet garantiert ein echtes Backspace
+          if (was_caps_word_on) {
+            caps_word_on();
+          }
+          SEND_STRING(was_caps_word_on ? "Q" : "q");
+          key_history[KEY_HISTORY_SIZE - 1] = KC_Q;
+        } else {
+          if (was_caps_word_on) {
+            tap_code16(LSFT(MAGIC_C_KEY));
+          } else {
+            tap_code(MAGIC_C_KEY);
+          }
+          add_to_history(MAGIC_C_KEY);
         }
 
         return false;
