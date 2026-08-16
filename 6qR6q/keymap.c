@@ -265,7 +265,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return true;
 
     case MAGIC_C_KEY:
-      if (record->tap.count && record->event.pressed) {
+      if (record->event.pressed) {
         bool was_caps_word_on = is_caps_word_on();
 
         // Look back at the history array!
@@ -289,7 +289,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         return false;
       }
-      return true;
+      return false;
 
     case KC_S:
         if (record->event.pressed) {
