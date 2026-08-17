@@ -167,9 +167,57 @@ static bool last_was_left_home_thumb_tap = false;
 // Define how many past keystrokes you want to remember
 #define KEY_HISTORY_SIZE 2
 #define KEY_HISTORY_ALLOWED_MODS (MOD_MASK_SHIFT | MOD_BIT(KC_RALT))
+#define KEY_HISTORY_KEYCODE_SHIFT_MODS (MOD_LSFT | MOD_RSFT)
 
 // Array to store the key history
 static uint16_t key_history[KEY_HISTORY_SIZE] = {0};
+
+// Custom QMK starts
+static uint16_t typed_keycode_for_history(uint16_t keycode) {
+  uint16_t typed_keycode = keycode;
+  bool keycode_has_shift = false;
+
+  if (IS_QK_MOD_TAP(keycode)) {
+    typed_keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+  } else if (IS_QK_LAYER_TAP(keycode)) {
+    typed_keycode = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+  } else if (IS_QK_MODS(keycode)) {
+    uint8_t keycode_mods = QK_MODS_GET_MODS(keycode);
+    if (keycode_mods & ~KEY_HISTORY_KEYCODE_SHIFT_MODS) {
+      return keycode;
+    }
+
+    typed_keycode = QK_MODS_GET_BASIC_KEYCODE(keycode);
+    keycode_has_shift = keycode_mods & KEY_HISTORY_KEYCODE_SHIFT_MODS;
+  }
+
+  if (typed_keycode > QK_BASIC_MAX) {
+    return typed_keycode;
+  }
+
+  if (keycode_has_shift || ((get_mods() | get_oneshot_mods() | get_weak_mods()) & MOD_MASK_SHIFT)) {
+    return LSFT(typed_keycode);
+  }
+
+  return typed_keycode;
+}
+
+static uint16_t history_base_keycode(uint16_t keycode) {
+  if (IS_QK_MODS(keycode)) {
+    uint8_t keycode_mods = QK_MODS_GET_MODS(keycode);
+    if (keycode_mods & ~KEY_HISTORY_KEYCODE_SHIFT_MODS) {
+      return keycode;
+    }
+
+    return QK_MODS_GET_BASIC_KEYCODE(keycode);
+  }
+
+  return keycode;
+}
+
+static bool history_key_is(uint8_t index, uint16_t keycode) {
+  return history_base_keycode(key_history[index]) == keycode;
+}
 
 // Helper function to push a new keycode into the history buffer
 void add_to_history(uint16_t keycode) {
@@ -177,6 +225,8 @@ void add_to_history(uint16_t keycode) {
   if (active_mods & ~KEY_HISTORY_ALLOWED_MODS) {
     return;
   }
+
+  keycode = typed_keycode_for_history(keycode);
 
   // Shift elements to the left to make room for the newest key
   for (int i = 0; i < KEY_HISTORY_SIZE - 1; i++) {
@@ -237,27 +287,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Look back at the history array!
         // index 0 is two keys ago; index 1 is the immediate last key
 
-        if (key_history[0] == KC_O && key_history[1] == MT(MOD_LCTL, KC_E)) {
+        if (history_key_is(0, KC_O) && history_key_is(1, KC_E)) {
           SEND_STRING(was_caps_word_on ? "S" : "s");
-          add_to_history(MT(MOD_LALT, KC_S));
-        } else if (key_history[0] == KC_O && key_history[1] == KC_A) {
+          add_to_history(was_caps_word_on ? LSFT(KC_S) : KC_S);
+        } else if (history_key_is(0, KC_O) && history_key_is(1, KC_A)) {
           SEND_STRING(was_caps_word_on ? "S" : "s");
-          add_to_history(MT(MOD_LALT, KC_S));
-        } else if (key_history[0] == MT(MOD_LALT, KC_S) && key_history[1] == MT(MOD_LSFT, KC_I)) {
+          add_to_history(was_caps_word_on ? LSFT(KC_S) : KC_S);
+        } else if (history_key_is(0, KC_S) && history_key_is(1, KC_I)) {
           tap_code(KC_BSPC); // Sendet garantiert ein echtes Backspace
           if (was_caps_word_on) {
             caps_word_on();
           }
           SEND_STRING(was_caps_word_on ? "CH" : "ch");
-          key_history[KEY_HISTORY_SIZE - 1] = KC_C;
-          add_to_history(MAGIC_H_KEY);
+          key_history[KEY_HISTORY_SIZE - 1] = was_caps_word_on ? LSFT(KC_C) : KC_C;
+          add_to_history(was_caps_word_on ? LSFT(KC_H) : KC_H);
         } else {
           if (was_caps_word_on) {
             tap_code16(LSFT(KC_H));
           } else {
             tap_code(KC_H);
           }
-          add_to_history(MAGIC_H_KEY);
+          add_to_history(was_caps_word_on ? LSFT(KC_H) : KC_H);
         }
 
         return false;
@@ -271,20 +321,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Look back at the history array!
         // index 0 is two keys ago; index 1 is the immediate last key
 
-        if (key_history[1] == KC_J) {
+        if (history_key_is(1, KC_J)) {
           tap_code(KC_BSPC); // Sendet garantiert ein echtes Backspace
           if (was_caps_word_on) {
             caps_word_on();
           }
           SEND_STRING(was_caps_word_on ? "Q" : "q");
-          key_history[KEY_HISTORY_SIZE - 1] = KC_Q;
+          key_history[KEY_HISTORY_SIZE - 1] = was_caps_word_on ? LSFT(KC_Q) : KC_Q;
         } else {
           if (was_caps_word_on) {
             tap_code16(LSFT(KC_C));
           } else {
             tap_code(KC_C);
           }
-          add_to_history(MAGIC_C_KEY);
+          add_to_history(was_caps_word_on ? LSFT(KC_C) : KC_C);
         }
 
         return false;
