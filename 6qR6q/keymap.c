@@ -27,7 +27,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     CW_TOGG,        MT(MOD_LGUI, KC_SCLN),         MT(MOD_LSFT, KC_S), MT(MOD_LALT, KC_I), MT(MOD_LCTL, KC_E),           KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T), MT(MOD_LALT, KC_N), MT(MOD_RSFT, KC_R), MAGIC_H_KEY, KC_X,
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_DOT,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,
     KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), LT(2, KC_SPACE),                                    LT(5, KC_LEFT_SHIFT),LT(3, KC_DELETE), KC_EQL,           LSFT(KC_EQL),           KC_GRV,           KC_8,
-                                                    KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
+                                                    KC_TAB, KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
   [1] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
@@ -58,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                     KC_TAB,         KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_ENTER
   ),
   [5] = LAYOUT_voyager(
-    KC_TRANSPARENT, KC_KP_PLUS,      KC_4,           KC_5,           KC_6,           KC_KP_DOT,                                    KC_TRANSPARENT, RCTL(KC_X),     RCTL(KC_V),     RCTL(KC_C),     KC_TRANSPARENT, KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_KP_PLUS,      KC_4,           KC_5,           KC_6,           KC_KP_DOT,                                    KC_TRANSPARENT, RCTL(KC_X),     RCTL(KC_V),     RCTL(KC_C),     OSM(MOD_LSFT | MOD_LALT),  KC_TRANSPARENT,
     KC_TRANSPARENT, KC_KP_MINUS,         KC_1,           KC_2,           KC_3,           LSFT(KC_DOT),                                   KC_TRANSPARENT, KC_RIGHT_CTRL,  KC_LEFT_ALT,    KC_RIGHT_SHIFT,    KC_RIGHT_GUI,   KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_7,           KC_8,           KC_9,           KC_DOT,                                     KC_TRANSPARENT, QK_LLCK,        TO(7),          KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_BSPC,        KC_0,                                           KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
