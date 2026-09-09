@@ -5,7 +5,7 @@
 // Custom QMK starts
 // Use a shorter tapping term for the home-row Shift mod-taps only.
 #define TAPPING_TERM_PER_KEY
-#define SHIFT_MOD_TAP_TAPPING_TERM 100
+#define SHIFT_MOD_TAP_TAPPING_TERM 200
 
 #define ONESHOT_TAP_TOGGLE 2
 
