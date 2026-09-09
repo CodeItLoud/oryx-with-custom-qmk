@@ -97,6 +97,19 @@ const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_voyage
                       'L', 'L',           'R', '*'
 );
 
+// Resolve the S/R home-row Shift keys as holds sooner than other tap-hold keys.
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+  (void)record;
+
+  switch (keycode) {
+    case MT(MOD_LSFT, KC_S):
+    case MT(MOD_RSFT, KC_R):
+      return SHIFT_MOD_TAP_TAPPING_TERM;
+    default:
+      return TAPPING_TERM;
+  }
+}
+
 
 
 

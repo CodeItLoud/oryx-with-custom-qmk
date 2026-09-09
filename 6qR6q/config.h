@@ -2,6 +2,11 @@
 #undef TAPPING_TERM
 #define TAPPING_TERM 250
 
+// Custom QMK starts
+// Use a shorter tapping term for the home-row Shift mod-taps only.
+#define TAPPING_TERM_PER_KEY
+#define SHIFT_MOD_TAP_TAPPING_TERM 100
+
 #define ONESHOT_TAP_TOGGLE 2
 
 #define PERMISSIVE_HOLD
