@@ -194,7 +194,6 @@ bool rgb_matrix_indicators_user(void) {
 
 
 static bool last_was_s_tap = false;
-static bool last_was_left_home_thumb_tap = false;
 
 // Define how many past keystrokes you want to remember
 #define KEY_HISTORY_SIZE 2
@@ -376,7 +375,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case KC_S:
         if (record->event.pressed) {
             last_was_s_tap = record->tap.count > 0;
-            last_was_left_home_thumb_tap = false;
             add_to_history(keycode);
         }
         return true;
@@ -390,46 +388,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
 
             last_was_s_tap = false;
-            last_was_left_home_thumb_tap = false;
         }
         return false;
 
     case HOME_THUMB_LEFT:
-      if (record->tap.count > 0) {
-        if (record->event.pressed) {
-          tap_code(KC_SPACE);
-          add_to_history(KC_SPACE);
+      if (record->event.pressed) {
+        set_oneshot_mods(MOD_BIT(KC_LSFT));
 
-          if (last_was_left_home_thumb_tap) {
-            clear_oneshot_mods();
-            last_was_left_home_thumb_tap = false;
-          } else {
-            set_oneshot_mods(MOD_BIT(KC_LSFT));
-            last_was_left_home_thumb_tap = true;
-          }
-        }
-      } else {
-        if (record->event.pressed) {
-          clear_oneshot_mods();
-          last_was_left_home_thumb_tap = false;
-          layer_on(2);
-        } else {
-          if (!is_layer_locked(2)) {
-            layer_off(2);
-          }
-        }
-      }
-      return false;
-
-    case HOME_THUMB_RIGHT:
-      if (last_was_left_home_thumb_tap) {
-        last_was_left_home_thumb_tap = false;
-        if (record->event.pressed && record->tap.count > 0) {
-          clear_oneshot_mods();
-          tap_code(KC_SPACE);
-          caps_word_on();
+        if (record->tap.count > 0) {
           add_to_history(KC_SPACE);
-          return false;
         }
       }
       return true;
@@ -437,13 +404,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     default:
         if (record->event.pressed) {
             last_was_s_tap = false;
-            last_was_left_home_thumb_tap = false;
             add_to_history(keycode);
         }
         return true;
   }
 
   return true;
+}
+
+// Re-arm sticky Shift after QMK emits the tap's Space so Space cannot consume it.
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (keycode == HOME_THUMB_LEFT && record->tap.count > 0 && record->event.pressed) {
+    set_oneshot_mods(MOD_BIT(KC_LSFT));
+  }
 }
 
 // Custom QMK here
