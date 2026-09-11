@@ -17,7 +17,9 @@ enum custom_keycodes {
 
 
 
-#define HOME_THUMB_LEFT LT(13, KC_L)
+// Custom QMK starts
+#define HOME_THUMB_LEFT LT(2, KC_SPACE)
+#define HOME_THUMB_RIGHT LT(5, KC_SPACE)
 #define MAGIC_H_KEY MT(MOD_RGUI, KC_H)
 #define MAGIC_C_KEY KC_C
 
@@ -26,7 +28,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESCAPE,      KC_Q,       MAGIC_C_KEY,           KC_U,           KC_A,           KC_COMMA,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_MINUS,
     CW_TOGG,        MT(MOD_LGUI, KC_SCLN),         MT(MOD_LSFT, KC_S), MT(MOD_LALT, KC_I), MT(MOD_LCTL, KC_E),           KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T), MT(MOD_LALT, KC_N), MT(MOD_RSFT, KC_R), MAGIC_H_KEY, KC_X,
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_DOT,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,
-    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), LT(2, KC_SPACE),                                    LT(5, KC_LEFT_SHIFT),LT(3, KC_DELETE), KC_EQL,           LSFT(KC_EQL),           KC_GRV,           KC_8,
+    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), HOME_THUMB_LEFT,                                    HOME_THUMB_RIGHT,LT(3, KC_DELETE), KC_EQL,           LSFT(KC_EQL),           KC_GRV,           KC_8,
                                                     KC_TAB, KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
   [1] = LAYOUT_voyager(
@@ -395,6 +397,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case HOME_THUMB_LEFT:
       if (record->tap.count > 0) {
         if (record->event.pressed) {
+          tap_code(KC_SPACE);
+          add_to_history(KC_SPACE);
+
           if (last_was_left_home_thumb_tap) {
             clear_oneshot_mods();
             last_was_left_home_thumb_tap = false;
@@ -416,13 +421,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
 
-    case LT(5, KC_SPACE):
+    case HOME_THUMB_RIGHT:
       if (last_was_left_home_thumb_tap) {
         last_was_left_home_thumb_tap = false;
         if (record->event.pressed && record->tap.count > 0) {
           clear_oneshot_mods();
+          tap_code(KC_SPACE);
           caps_word_on();
-          add_to_history(keycode);
+          add_to_history(KC_SPACE);
           return false;
         }
       }
