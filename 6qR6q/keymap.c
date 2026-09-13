@@ -18,7 +18,8 @@ enum custom_keycodes {
 
 
 // Custom QMK starts
-#define HOME_THUMB_LEFT LT(2, KC_SPACE)
+// Hold layer 2; handle taps as sticky Shift in process_record_user().
+#define HOME_THUMB_LEFT LT(2, KC_NO)
 #define HOME_THUMB_RIGHT LT(5, KC_SPACE)
 #define MAGIC_H_KEY MT(MOD_RGUI, KC_H)
 #define MAGIC_C_KEY KC_C
@@ -392,12 +393,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
 
     case HOME_THUMB_LEFT:
-      if (record->event.pressed) {
+      if (record->tap.count > 0 && record->event.pressed) {
         set_oneshot_mods(MOD_BIT(KC_LSFT));
-
-        if (record->tap.count > 0) {
-          add_to_history(KC_SPACE);
-        }
       }
       return true;
 
@@ -410,13 +407,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   return true;
-}
-
-// Re-arm sticky Shift after QMK emits the tap's Space so Space cannot consume it.
-void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-  if (keycode == HOME_THUMB_LEFT && record->tap.count > 0 && record->event.pressed) {
-    set_oneshot_mods(MOD_BIT(KC_LSFT));
-  }
 }
 
 // Custom QMK here
