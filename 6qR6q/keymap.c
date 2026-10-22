@@ -26,9 +26,9 @@ enum custom_keycodes {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
-    KC_ESCAPE,      KC_Q,       MAGIC_C_KEY,           KC_U,           KC_A,           KC_COMMA,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_MINUS,
+    KC_ESCAPE,      KC_Q,       MAGIC_C_KEY,           KC_U,           KC_A,           KC_QUOTE,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_MINUS,
     CW_TOGG,        MT(MOD_LGUI, KC_SCLN),         MT(MOD_LSFT, KC_S), MT(MOD_LALT, KC_I), MT(MOD_LCTL, KC_E),           KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T), MT(MOD_LALT, KC_N), MT(MOD_RSFT, KC_R), MAGIC_H_KEY, KC_X,
-    MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_QUOTE,       KC_DOT,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,
+    MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_COMMA,       KC_DOT,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,
     KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), HOME_THUMB_LEFT,                                    HOME_THUMB_RIGHT,LT(3, KC_DELETE), KC_EQL,           LSFT(KC_EQL),           KC_GRV,           KC_8,
                                                     KC_TAB, KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
