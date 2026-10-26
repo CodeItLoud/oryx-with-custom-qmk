@@ -24,6 +24,13 @@ enum custom_keycodes {
 #define MAGIC_H_KEY MT(MOD_RGUI, KC_H)
 #define MAGIC_C_KEY KC_C
 
+// Custom QMK: toggle Caps Word with the Z + [ + comma chord.
+const uint16_t PROGMEM caps_word_combo[] = {KC_Z, KC_LBRC, KC_COMMA, COMBO_END};
+
+combo_t key_combos[] = {
+  COMBO(caps_word_combo, CW_TOGG),
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_ESCAPE,      KC_Q,       MAGIC_C_KEY,           KC_U,           KC_A,           KC_QUOTE,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_MINUS,
