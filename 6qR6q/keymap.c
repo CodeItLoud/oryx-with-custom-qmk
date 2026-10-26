@@ -13,6 +13,7 @@ enum custom_keycodes {
   ST_MACRO_3,
   ST_MACRO_4,
   ST_MACRO_5,
+  COAST_COMBO_OUTPUT,
 };
 
 
@@ -24,11 +25,13 @@ enum custom_keycodes {
 #define MAGIC_H_KEY MT(MOD_RGUI, KC_H)
 #define MAGIC_C_KEY KC_C
 
-// Custom QMK: toggle Caps Word with the Z + [ + comma chord.
+// Custom QMK: layer-0 three-key chords.
 const uint16_t PROGMEM caps_word_combo[] = {KC_Z, KC_LBRC, KC_COMMA, COMBO_END};
+const uint16_t PROGMEM coast_combo[] = {KC_G, KC_W, KC_Y, COMBO_END};
 
 combo_t key_combos[] = {
   COMBO(caps_word_combo, CW_TOGG),
+  COMBO(coast_combo, COAST_COMBO_OUTPUT),
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -319,6 +322,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 
     // Custom QMK starts
+    case COAST_COMBO_OUTPUT:
+      if (record->event.pressed) {
+        SEND_STRING("COAST");
+      }
+      return false;
+
     case MAGIC_H_KEY:
       if (record->tap.count && record->event.pressed) {
         bool was_caps_word_on = is_caps_word_on();
