@@ -291,8 +291,58 @@ void add_to_history(uint16_t keycode) {
   key_history[KEY_HISTORY_SIZE - 1] = keycode;
 }
 
+// Custom QMK: prefix a character with Space after an unmodified home-row OSM tap.
+static bool prepend_space_to_oneshot_shift = false;
+
+static bool is_typed_character(uint16_t keycode, keyrecord_t *record) {
+  if (IS_QK_MOD_TAP(keycode)) {
+    if (!record->tap.count) {
+      return false;
+    }
+    keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+  } else if (IS_QK_LAYER_TAP(keycode)) {
+    if (!record->tap.count) {
+      return false;
+    }
+    keycode = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+  } else if (IS_QK_MODS(keycode)) {
+    keycode = QK_MODS_GET_BASIC_KEYCODE(keycode);
+  }
+
+  return (keycode >= KC_A && keycode <= KC_0) ||
+         (keycode >= KC_SPACE && keycode <= KC_SLASH) ||
+         (keycode >= KC_KP_SLASH && keycode <= KC_KP_PLUS) ||
+         (keycode >= KC_KP_1 && keycode <= KC_KP_DOT) ||
+         keycode == KC_NONUS_BACKSLASH;
+}
+
+static void tap_unmodified_space(void) {
+  uint8_t saved_mods = get_mods();
+  uint8_t saved_weak_mods = get_weak_mods();
+  uint8_t saved_oneshot_mods = get_oneshot_mods();
+
+  clear_mods();
+  clear_weak_mods();
+  clear_oneshot_mods();
+  tap_code(KC_SPACE);
+  add_to_history(KC_SPACE);
+  set_mods(saved_mods);
+  set_weak_mods(saved_weak_mods);
+  set_oneshot_mods(saved_oneshot_mods);
+}
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (record->event.pressed && prepend_space_to_oneshot_shift) {
+    if (!(get_oneshot_mods() & MOD_MASK_SHIFT)) {
+      prepend_space_to_oneshot_shift = false;
+    } else if (is_typed_character(keycode, record)) {
+      prepend_space_to_oneshot_shift = false;
+      last_was_s_tap = false;
+      tap_unmodified_space();
+    }
+  }
+
   switch (keycode) {
     case ST_MACRO_0:
     if (record->event.pressed) {
@@ -331,6 +381,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
     // Custom QMK starts
+    case NAV_HOME_SHIFT:
+    case NUM_HOME_SHIFT:
+      if (record->event.pressed) {
+        uint8_t active_mods = get_mods() | get_oneshot_mods() | get_weak_mods();
+        prepend_space_to_oneshot_shift = record->tap.count > 0 && !active_mods;
+      }
+      return true;
+
     case MAGIC_H_KEY:
       if (record->tap.count && record->event.pressed) {
         bool was_caps_word_on = is_caps_word_on();
