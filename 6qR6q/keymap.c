@@ -18,11 +18,9 @@ enum custom_keycodes {
 
 
 // Custom QMK starts
-// Both left thumbs hold NAV; both right thumbs hold the function layer.
-#define NAV_THUMB_OUTER LT(2, KC_NO)
-#define NAV_THUMB_INNER LT(2, KC_SPACE)
-#define FUNCTION_THUMB_INNER LT(6, KC_SPACE)
-#define FUNCTION_THUMB_OUTER LT(6, KC_NO)
+// Hold for the layer; tap for Space on either side.
+#define HOME_THUMB_LEFT LT(2, KC_SPACE)
+#define HOME_THUMB_RIGHT LT(5, KC_SPACE)
 #define NAV_HOME_SHIFT OSM(MOD_LSFT)
 #define NUM_HOME_SHIFT OSM(MOD_RSFT)
 #define MAGIC_H_KEY MT(MOD_RGUI, KC_H)
@@ -39,11 +37,11 @@ combo_t key_combos[] = {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
-    KC_NO,          KC_1,       KC_2,                   KC_3,           KC_4,           KC_5,                                               KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_NO,
     KC_ESCAPE,      KC_Q,       MAGIC_C_KEY,           KC_U,           KC_A,           KC_QUOTE,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_MINUS,
     CW_TOGG,        MT(MOD_LGUI, KC_SCLN),         MT(MOD_LSFT, KC_S), MT(MOD_LALT, KC_I), MT(MOD_LCTL, KC_E),           KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T), MT(MOD_LALT, KC_N), MT(MOD_RSFT, KC_R), MAGIC_H_KEY, KC_X,
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        KC_COMMA,       KC_DOT,                                        KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,
-                                                    NAV_THUMB_OUTER, NAV_THUMB_INNER,                                 FUNCTION_THUMB_INNER, FUNCTION_THUMB_OUTER
+    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), HOME_THUMB_LEFT,                                    HOME_THUMB_RIGHT,LT(3, KC_DELETE), KC_EQL,           LSFT(KC_EQL),           KC_GRV,           KC_8,
+                                                    KC_TAB, KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
   [1] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
@@ -116,13 +114,13 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 }
 
-// Exempt layer 0's four layer-tap thumb keys from Chordal Hold.
+// Exempt layer 0's five layer-tap thumb keys from Chordal Hold.
 const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_voyager(
   'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
   'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
   'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
-  'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
-                      '*', '*',           '*', '*'
+  'L', 'L', 'L', 'L', '*', '*', '*', '*', 'R', 'R', 'R', 'R',
+                      'L', 'L',           'R', '*'
 );
 
 // Resolve the S/R home-row Shift keys as holds sooner than other tap-hold keys.
@@ -383,18 +381,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
     // Custom QMK starts
-    case NAV_THUMB_OUTER:
-    case FUNCTION_THUMB_OUTER:
-      if (record->tap.count > 0) {
-        if (record->event.pressed) {
-          prepend_space_to_oneshot_shift = false;
-          tap_unmodified_space();
-          add_oneshot_mods(keycode == NAV_THUMB_OUTER ? MOD_BIT(KC_LSFT) : MOD_BIT(KC_RSFT));
-        }
-        return false;
-      }
-      return true;
-
     case NAV_HOME_SHIFT:
     case NUM_HOME_SHIFT:
       if (record->event.pressed) {
