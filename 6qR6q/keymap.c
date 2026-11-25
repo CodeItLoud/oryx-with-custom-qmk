@@ -19,10 +19,10 @@ enum custom_keycodes {
 
 // Custom QMK starts
 // Both left thumbs hold NAV; both right thumbs hold the function layer.
-#define NAV_THUMB_OUTER LT(2, KC_NO)
-#define NAV_THUMB_INNER LT(2, KC_SPACE)
-#define FUNCTION_THUMB_INNER LT(6, KC_SPACE)
-#define FUNCTION_THUMB_OUTER LT(6, KC_NO)
+#define NAV_THUMB_OUTER LT(2, KC_SPACE)
+#define NAV_THUMB_INNER LT(2, KC_NO)
+#define FUNCTION_THUMB_INNER LT(6, KC_NO)
+#define FUNCTION_THUMB_OUTER LT(6, KC_SPACE)
 #define NAV_HOME_SHIFT OSM(MOD_LSFT)
 #define NUM_HOME_SHIFT OSM(MOD_RSFT)
 #define MAGIC_H_KEY MT(MOD_RGUI, KC_H)
@@ -383,13 +383,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
     // Custom QMK starts
-    case NAV_THUMB_OUTER:
-    case FUNCTION_THUMB_OUTER:
+    case NAV_THUMB_INNER:
+    case FUNCTION_THUMB_INNER:
       if (record->tap.count > 0) {
         if (record->event.pressed) {
           prepend_space_to_oneshot_shift = false;
           tap_unmodified_space();
-          add_oneshot_mods(keycode == NAV_THUMB_OUTER ? MOD_BIT(KC_LSFT) : MOD_BIT(KC_RSFT));
+          add_oneshot_mods(keycode == NAV_THUMB_INNER ? MOD_BIT(KC_LSFT) : MOD_BIT(KC_RSFT));
         }
         return false;
       }
