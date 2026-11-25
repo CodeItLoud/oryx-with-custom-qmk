@@ -27,12 +27,14 @@ enum custom_keycodes {
 #define MAGIC_C_KEY KC_C
 
 // Custom QMK: layer-0 three-key chords.
-const uint16_t PROGMEM caps_word_combo[] = {KC_Z, KC_LBRC, KC_COMMA, COMBO_END};
+const uint16_t PROGMEM caps_word_combo[] = {KC_Z, KC_LBRC, LT(4, KC_COMMA), COMBO_END};
 const uint16_t PROGMEM coast_combo[] = {KC_G, KC_W, KC_Y, COMBO_END};
+const uint16_t PROGMEM caps_lock_combo[] = {KC_Y, KC_LBRC, LT(4, KC_COMMA), COMBO_END};
 
 combo_t key_combos[] = {
   COMBO(caps_word_combo, CW_TOGG),
   COMBO(coast_combo, CW_TOGG),
+  COMBO(caps_lock_combo, KC_CAPS_LOCK),
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -52,7 +54,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [2] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, LCTL(KC_C),     LCTL(KC_V),     LCTL(KC_X),     KC_TRANSPARENT,                                 LCTL(KC_Z),     KC_TAB,         KC_BSPC,        KC_DELETE,      KC_ESCAPE,      KC_TRANSPARENT,
-    KC_TRANSPARENT, KC_LEFT_GUI,    NAV_HOME_SHIFT, KC_LEFT_ALT,  KC_LEFT_CTRL,  KC_TRANSPARENT,                                 KC_CAPS,        KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       KC_TRANSPARENT,
+    KC_TRANSPARENT, KC_LEFT_GUI,    NAV_HOME_SHIFT, KC_LEFT_ALT,  KC_LEFT_CTRL,  KC_TRANSPARENT,                                 KC_TRANSPARENT,        KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, MOD_LSFT, QK_LLCK,        KC_TRANSPARENT,                                 KC_INSERT,      KC_HOME,        KC_PGDN,        KC_PAGE_UP,     KC_END,         KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,        KC_TRANSPARENT,                                 CW_TOGG,              KC_DELETE,      KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_ENTER
