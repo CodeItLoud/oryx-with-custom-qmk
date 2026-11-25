@@ -40,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESCAPE,      KC_Q,       MAGIC_C_KEY,           KC_U,           KC_A,           KC_QUOTE,                                           KC_P,           KC_B,           KC_M,           KC_L,           KC_F,           KC_MINUS,
     CW_TOGG,        MT(MOD_LGUI, KC_SCLN),         MT(MOD_LSFT, KC_S), MT(MOD_LALT, KC_I), MT(MOD_LCTL, KC_E),           KC_O,                                           KC_D,           MT(MOD_RCTL, KC_T), MT(MOD_LALT, KC_N), MT(MOD_RSFT, KC_R), MAGIC_H_KEY, KC_X,
     MT(MOD_LGUI, KC_SLASH),KC_TRANSPARENT, KC_Z,           KC_LBRC,        LT(4, KC_COMMA), KC_DOT,                                       KC_V,           KC_G,           KC_W,           KC_Y,           KC_K,           KC_J,
-    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_BSPC), HOME_THUMB_LEFT,                                    HOME_THUMB_RIGHT,LT(3, KC_DELETE), KC_EQL,           LSFT(KC_EQL),           KC_GRV,           KC_8,
+    KC_TRANSPARENT, KC_7,           KC_5,           KC_3,           LT(4, KC_NO),   HOME_THUMB_LEFT,                                    HOME_THUMB_RIGHT,LT(3, KC_NO),     KC_EQL,           LSFT(KC_EQL),           KC_GRV,           KC_8,
                                                     KC_TAB, KC_TRANSPARENT,                                 KC_TRANSPARENT, LT(6, KC_ENTER)
   ),
   [1] = LAYOUT_voyager(
@@ -387,6 +387,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
     // Custom QMK starts
+    // Layers 3 and 4 on hold; Space then one-shot Shift on tap.
+    case LT(4, KC_NO):
+    case LT(3, KC_NO):
+      if (record->tap.count) {
+        if (record->event.pressed) {
+          tap_unmodified_space();
+          set_oneshot_mods(get_oneshot_mods() | MOD_BIT(KC_LSFT));
+        }
+        return false;
+      }
+      return true;
+
     case HOME_THUMB_LEFT:
       if (record->tap.count) {
         if (record->event.pressed) {
