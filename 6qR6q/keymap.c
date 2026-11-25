@@ -18,8 +18,8 @@ enum custom_keycodes {
 
 
 // Custom QMK starts
-// Hold for the layer; tap for Space on either side.
-#define HOME_THUMB_LEFT LT(2, KC_SPACE)
+// Hold for the layer; the left tap becomes one-shot Shift in process_record_user().
+#define HOME_THUMB_LEFT LT(2, KC_NO)
 #define HOME_THUMB_RIGHT LT(5, KC_SPACE)
 #define NAV_HOME_SHIFT OSM(MOD_LSFT)
 #define NUM_HOME_SHIFT OSM(MOD_RSFT)
@@ -381,6 +381,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
     // Custom QMK starts
+    case HOME_THUMB_LEFT:
+      if (record->tap.count) {
+        if (record->event.pressed) {
+          set_oneshot_mods(get_oneshot_mods() | MOD_BIT(KC_LSFT));
+        }
+        return false;
+      }
+      return true;
+
     case NAV_HOME_SHIFT:
     case NUM_HOME_SHIFT:
       if (record->event.pressed) {
