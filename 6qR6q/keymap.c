@@ -293,6 +293,7 @@ void add_to_history(uint16_t keycode) {
 
 // Custom QMK: prefix a character with Space after an unmodified home-row OSM tap.
 static bool prepend_space_to_oneshot_shift = false;
+static bool last_tap_was_left_home_thumb = false;
 
 static bool is_typed_character(uint16_t keycode, keyrecord_t *record) {
   if (IS_QK_MOD_TAP(keycode)) {
@@ -343,6 +344,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
   }
 
+  if (record->event.pressed &&
+      keycode != HOME_THUMB_LEFT && keycode != HOME_THUMB_RIGHT) {
+    last_tap_was_left_home_thumb = false;
+  }
+
   switch (keycode) {
     case ST_MACRO_0:
     if (record->event.pressed) {
@@ -385,8 +391,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       if (record->tap.count) {
         if (record->event.pressed) {
           set_oneshot_mods(get_oneshot_mods() | MOD_BIT(KC_LSFT));
+          last_tap_was_left_home_thumb = true;
         }
         return false;
+      }
+      if (record->event.pressed) {
+        last_tap_was_left_home_thumb = false;
+      }
+      return true;
+
+    case HOME_THUMB_RIGHT:
+      if (record->tap.count && last_tap_was_left_home_thumb) {
+        if (record->event.pressed) {
+          tap_unmodified_space();
+          set_oneshot_mods(get_oneshot_mods() | MOD_BIT(KC_LSFT));
+        } else {
+          last_tap_was_left_home_thumb = false;
+        }
+        return false;
+      }
+      if (record->event.pressed) {
+        last_tap_was_left_home_thumb = false;
       }
       return true;
 
