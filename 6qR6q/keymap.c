@@ -28,7 +28,7 @@ enum custom_keycodes {
 
 // Custom QMK: layer-0 three-key chords.
 const uint16_t PROGMEM caps_word_combo[] = {KC_Z, KC_LBRC, LT(4, KC_COMMA), COMBO_END};
-const uint16_t PROGMEM coast_combo[] = {KC_G, KC_W, KC_Y, COMBO_END};
+const uint16_t PROGMEM coast_combo[] = {LT(3, KC_G), KC_W, KC_Y, COMBO_END};
 const uint16_t PROGMEM y_caps_word_combo[] = {KC_Y, KC_LBRC, LT(4, KC_COMMA), COMBO_END};
 
 combo_t key_combos[] = {
